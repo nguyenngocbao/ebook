@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Soạn sách</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:wght@500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="admin">
+
+<form id="login" hidden>
+  <h1 class="serif">Soạn sách</h1>
+  <label for="pw">Mật khẩu</label>
+  <input class="field" id="pw" type="password" autocomplete="current-password" required>
+  <button class="btn" type="submit">Đăng nhập</button>
+  <p class="err" id="loginErr" role="alert"></p>
+</form>
+
+<main id="editor" hidden>
+  <div id="head">
+    <h1 class="serif">Soạn sách</h1>
+    <a class="pill" href="/" target="_blank" rel="noopener">Xem trang công khai</a>
+    <button class="pill" id="logout" type="button">Đăng xuất</button>
+  </div>
+
+  <div id="titleRow">
+    <label for="bookTitle">Tên sách</label>
+    <input class="field" id="bookTitle" type="text" maxlength="200" autocomplete="off">
+  </div>
+
+  <div id="tools">
+    <button class="pill" id="addAfter" type="button">Thêm trang</button>
+    <button class="pill" id="addStart" type="button">Thêm vào đầu sách</button>
+    <button class="pill" id="replace" type="button">Thay trang</button>
+    <button class="pill" id="moveUp" type="button" aria-label="Chuyển trang lên trước">◀ Lên trước</button>
+    <button class="pill" id="moveDown" type="button" aria-label="Chuyển trang ra sau">Ra sau ▶</button>
+    <button class="pill danger" id="remove" type="button">Xoá trang</button>
+    <span id="selInfo"></span>
+  </div>
+  <input id="picker" type="file" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp" multiple hidden>
+
+  <p id="emptyPages" hidden>Sách chưa có trang nào. Bấm “Thêm trang” rồi chọn file PDF hoặc ảnh PNG, JPG.</p>
+  <div id="pages"></div>
+</main>
+
+<div id="saveBar" hidden>
+  <span id="saveState"></span>
+  <button class="btn" id="save" type="button">Lưu</button>
+</div>
+<div id="busy" hidden><span id="busyText"></span></div>
+<div id="toast" role="alert" hidden></div>
+
+<script src="/vendor/pdf.min.js"></script>
+<script src="/common.js"></script>
+<script src="/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+services:
+  ebook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ebook:latest
+    container_name: ebook
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3008:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ebook-data:/data
+
+volumes:
+  ebook-data:

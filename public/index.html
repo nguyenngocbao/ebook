@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sách</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:wght@500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="reader">
+  <div id="top"><h1 id="title" class="serif"></h1></div>
+  <div id="stage">
+    <div id="box"></div>
+    <p id="note">Đang mở sách…</p>
+  </div>
+  <div id="bottom" hidden>
+    <button class="nav" id="prev" type="button" aria-label="Trang trước">‹</button>
+    <input id="slider" type="range" min="1" max="1" value="1" aria-label="Chuyển tới trang">
+    <span id="label"></span>
+    <button class="nav" id="next" type="button" aria-label="Trang sau">›</button>
+  </div>
+  <script src="/vendor/pdf.min.js"></script>
+  <script src="/vendor/page-flip.browser.js"></script>
+  <script src="/common.js"></script>
+  <script src="/reader.js"></script>
+</body>
+</html>
