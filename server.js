@@ -259,11 +259,29 @@ app.get('/vendor/:name', (req, res) => {
 });
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
+
+// Gắn ?v=<mã băm nội dung> vào các file css/js của trang. Cloudflare và trình duyệt giữ đệm
+// file tĩnh nhiều giờ, nên không có mã này thì máy từng vào trang sẽ chạy JS/CSS cũ với HTML mới.
+const ASSET_VERSION = (() => {
+  const h = crypto.createHash('sha1');
+  for (const f of ['style.css', 'common.js', 'reader.js', 'admin.js']) {
+    try { h.update(fs.readFileSync(path.join(PUBLIC_DIR, f))); } catch (e) { /* bỏ qua file thiếu */ }
+  }
+  return h.digest('hex').slice(0, 10);
+})();
+function versionedPage(name) {
+  const html = fs.readFileSync(path.join(PUBLIC_DIR, name), 'utf8');
+  return html.replace(/(href|src)="(\/(?:style\.css|common\.js|reader\.js|admin\.js))"/g,
+    (m, attr, url) => attr + '="' + url + '?v=' + ASSET_VERSION + '"');
+}
+const PAGES = { index: versionedPage('index.html'), admin: versionedPage('admin.html') };
+
 app.get('/admin', noStore, (req, res) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-  res.sendFile(path.join(PUBLIC_DIR, 'admin.html'));
+  res.type('html').send(PAGES.admin);
 });
-app.use(express.static(PUBLIC_DIR, { index: 'index.html', extensions: [] }));
+app.get(['/', '/index.html'], noStore, (req, res) => res.type('html').send(PAGES.index));
+app.use(express.static(PUBLIC_DIR, { index: false, extensions: [] }));
 
 app.use((req, res) => res.status(404).send('Không tìm thấy trang.'));
 
