@@ -8,16 +8,18 @@
 <link rel="stylesheet" href="/style.css">
 </head>
 <body class="reader">
-  <div id="top"><h1 id="title" class="serif"></h1></div>
   <div id="stage">
     <div id="box"></div>
+    <button class="edge" id="prev" type="button" aria-label="Trang trước" hidden><svg viewBox="0 0 40 72" width="40" height="72" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M32 6L6 36l26 30"/></svg></button>
+    <button class="edge" id="next" type="button" aria-label="Trang sau" hidden><svg viewBox="0 0 40 72" width="40" height="72" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l26 30L8 66"/></svg></button>
     <p id="note">Đang mở sách…</p>
   </div>
   <div id="bottom" hidden>
-    <button class="nav" id="prev" type="button" aria-label="Trang trước">‹</button>
-    <input id="slider" type="range" min="1" max="1" value="1" aria-label="Chuyển tới trang">
-    <span id="label"></span>
-    <button class="nav" id="next" type="button" aria-label="Trang sau">›</button>
+    <div id="bar">
+      <span id="label"></span>
+      <input id="slider" type="range" min="1" max="1" value="1" aria-label="Chuyển tới trang">
+      <button class="tool" id="full" type="button" aria-label="Toàn màn hình" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
   </div>
   <script src="/vendor/pdf.min.js"></script>
   <script src="/vendor/page-flip.browser.js"></script>

@@ -4,6 +4,7 @@
   var $ = function(s){ return document.querySelector(s); };
   var stage = $('#stage'), box = $('#box'), note = $('#note');
   var slider = $('#slider'), label = $('#label'), bottom = $('#bottom');
+  var prevBtn = $('#prev'), nextBtn = $('#next'), fullBtn = $('#full');
 
   var AHEAD = 5, KEEP = 10, POLL_MS = 10000;
   var book = null, pages = [], flip = null;
@@ -18,14 +19,13 @@
     book = b;
     pages = Book.expand(b.segs);
     document.title = b.title || 'Sách';
-    $('#title').textContent = b.title || '';
     if (!pages.length){
       teardown();
       note.hidden = false; note.textContent = 'Sách đang được soạn. Hãy quay lại sau.';
-      bottom.hidden = true;
+      bottom.hidden = true; prevBtn.hidden = nextBtn.hidden = true;
       return;
     }
-    note.hidden = true; bottom.hidden = false;
+    note.hidden = true; bottom.hidden = false; prevBtn.hidden = nextBtn.hidden = false;
     build();
   }
 
@@ -127,16 +127,33 @@
       }
     }
   }
+  var edgeTimer = null;
+  function placeEdges(){
+    var s = stage.getBoundingClientRect(), r = box.getBoundingClientRect();
+    if (!r.width) return;
+    var left = Math.max(0, r.left - s.left), right = Math.max(0, s.right - r.right);
+    prevBtn.style.left = (left + 6) + 'px';
+    nextBtn.style.right = (right + 6) + 'px';
+  }
   function updateUI(){
     if (!flip) return;
     var n = pages.length, a = current + 1, text;
     var two = flip.getOrientation() === 'landscape';
-    if (two && current > 0 && a < n) text = a + '–' + (a + 1) + ' / ' + n;
-    else text = a + ' / ' + n;
-    label.textContent = 'Trang ' + text;
+    if (two && current > 0 && a < n) text = a + '-' + (a + 1) + '/' + n;
+    else text = a + '/' + n;
+    label.textContent = text;
     slider.value = String(a);
-    $('#prev').disabled = current <= 0;
-    $('#next').disabled = two ? (current + 2 >= n && !(current === 0 && n > 1)) : (current + 1 >= n);
+    slider.style.setProperty('--p', (n > 1 ? (a - 1) / (n - 1) * 100 : 0) + '%');
+    prevBtn.disabled = current <= 0;
+    nextBtn.disabled = two ? (current + 2 >= n && !(current === 0 && n > 1)) : (current + 1 >= n);
+    // Màn hình rộng: bìa (và trang cuối lẻ) đứng một mình, dời cho cân giữa màn hình
+    var shift = 0;
+    if (two && current === 0) shift = -25;
+    else if (two && current === n - 1 && n % 2 === 0) shift = 25;
+    box.style.transform = shift ? 'translateX(' + shift + '%)' : '';
+    placeEdges();
+    clearTimeout(edgeTimer);
+    edgeTimer = setTimeout(placeEdges, 700);
   }
   function goTo(i){
     if (!flip) return;
@@ -145,21 +162,32 @@
     updateUI(); pump();
   }
 
-  $('#prev').addEventListener('click', function(){ if (flip) flip.flipPrev(); });
-  $('#next').addEventListener('click', function(){ if (flip) flip.flipNext(); });
+  prevBtn.addEventListener('click', function(){ if (flip) flip.flipPrev(); });
+  nextBtn.addEventListener('click', function(){ if (flip) flip.flipNext(); });
   slider.addEventListener('input', function(){ goTo(parseInt(slider.value, 10) - 1); });
   document.addEventListener('keydown', function(e){
     if (!flip || e.target === slider) return;
     if (e.key === 'ArrowRight') flip.flipNext();
     else if (e.key === 'ArrowLeft') flip.flipPrev();
   });
+  // Toàn màn hình (iPhone Safari không hỗ trợ cho trang web thì ẩn nút)
+  var fsEl = document.documentElement;
+  var fsReq = fsEl.requestFullscreen || fsEl.webkitRequestFullscreen;
+  if (fsReq){
+    fullBtn.hidden = false;
+    fullBtn.addEventListener('click', function(){
+      var on = document.fullscreenElement || document.webkitFullscreenElement;
+      if (on) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      else fsReq.call(fsEl);
+    });
+  }
   var resizeTimer = null;
   window.addEventListener('resize', function(){
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function(){
       if (!flip) return;
       var w = stage.clientWidth, h = stage.clientHeight;
-      if (Math.abs(w - lastW) > 8 || Math.abs(h - lastH) > 100) build();
+      if (Math.abs(w - lastW) > 8 || Math.abs(h - lastH) > 100) build(); else placeEdges();
     }, 250);
   });
 

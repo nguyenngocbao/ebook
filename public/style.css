@@ -1,11 +1,11 @@
 :root{
-  --desk:#DCE3D5; --desk-deep:#C6D0BE; --panel:#F6F8F2; --ink:#1B2821; --muted:#55655B;
-  --accent:#1F5C45; --on-accent:#FFFFFF; --line:#B4C0AD; --danger:#B3261E;
+  --desk:#EEECE8; --desk-deep:#DAD7D1; --panel:#FAF9F7; --ink:#1E1F22; --muted:#62656B;
+  --accent:#1F5C45; --on-accent:#FFFFFF; --line:#CFCBC4; --danger:#B3261E;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --desk:#14201A; --desk-deep:#0E1813; --panel:#1D2B24; --ink:#E7EDE6; --muted:#9AAA9F;
-    --accent:#8FD0AE; --on-accent:#0E1813; --line:#32453A; --danger:#FFB4AB;
+    --desk:#26272B; --desk-deep:#17181B; --panel:#2E2F34; --ink:#ECECEE; --muted:#A1A4AB;
+    --accent:#8FD0AE; --on-accent:#0E1813; --line:#43454B; --danger:#FFB4AB;
   }
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -32,21 +32,60 @@ button:disabled{opacity:.45;cursor:default}
 .pill.danger{color:var(--danger)}
 
 /* ---------- Trang đọc ---------- */
+/* Màu cố định cho trang đọc (nền cam đào), không đổi theo chế độ sáng/tối của máy */
+body.reader{
+  color-scheme:light;
+  --desk:#EAF1FB; --desk-deep:#D6E3F5; --panel:#FFFFFF; --ink:#14213D; --muted:#5B6B85; --line:#C9D6EA;
+  background:#EAF1FB url("/bg.jpg") left bottom / cover no-repeat fixed;
+}
 body.reader{overflow:hidden;display:flex;flex-direction:column;
   padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-#top{padding:12px 16px 4px;text-align:center}
-#title{margin:0;font-size:1.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.reader #stage,body.reader #bottom{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){#box{transition:none}}
 #stage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#box{position:relative;filter:drop-shadow(0 18px 28px rgba(8,20,14,.35))}
+#box{position:relative;transition:transform .6s cubic-bezier(.16,1,.3,1);filter:drop-shadow(0 16px 26px rgba(20,40,90,.28))}
 #note{color:var(--muted);padding:24px;text-align:center;max-width:30em}
-#bottom{display:flex;align-items:center;gap:10px;padding:10px 14px 14px}
-.nav{
-  width:46px;height:46px;flex:none;border-radius:50%;
-  border:1px solid var(--line);background:var(--panel);
-  display:grid;place-items:center;font-size:1.25rem;line-height:1;
+#bottom{display:flex;justify-content:flex-end;padding:8px 14px 16px}
+#bar{
+  display:flex;align-items:center;gap:12px;width:min(calc(100% - 92px),460px);
+  padding:8px 8px 8px 16px;border-radius:16px;
+  background:color-mix(in srgb, var(--panel) 78%, transparent);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 6px 20px rgba(20,40,90,.16), inset 0 0 0 1px rgba(255,255,255,.55);
 }
-#slider{flex:1;min-width:0;accent-color:var(--accent);height:30px}
-#label{flex:none;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums;min-width:6.5em;text-align:right}
+.tool{
+  width:40px;height:40px;flex:none;border-radius:12px;border:0;background:transparent;
+  display:grid;place-items:center;color:var(--ink);
+}
+.tool:active{background:color-mix(in srgb,var(--ink) 10%,transparent)}
+/* Mũi tên lớn đè lên mép trang, giống FlipHTML5 */
+.edge{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:44px;height:96px;border:0;background:transparent;padding:0;
+  display:grid;place-items:center;color:#fff;
+  filter:drop-shadow(0 0 1.5px rgba(10,25,60,.7)) drop-shadow(0 2px 4px rgba(10,25,60,.3));
+  -webkit-tap-highlight-color:transparent;
+}
+.edge svg{width:28px;height:50px;stroke-width:3.4}
+.edge:disabled{opacity:0;pointer-events:none}
+.edge:active{opacity:.7}
+#slider{
+  --p:0%;flex:1;min-width:0;height:28px;margin:0;background:transparent;
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+}
+#slider::-webkit-slider-runnable-track{
+  height:3px;border-radius:3px;
+  background:linear-gradient(to right,var(--ink) var(--p),color-mix(in srgb,var(--ink) 18%,transparent) var(--p));
+}
+#slider::-moz-range-track{height:3px;border-radius:3px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+#slider::-moz-range-progress{height:3px;border-radius:3px;background:var(--ink)}
+#slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;
+  margin-top:-5.5px;background:var(--ink);border:2px solid var(--panel);box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+#slider::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--ink);border:2px solid var(--panel)}
+#slider:focus-visible{outline-offset:4px;border-radius:8px}
+#label{flex:none;font-size:1.05rem;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.6em}
 
 .stf__wrapper{position:relative;width:100%}
 .page{background:#fff;overflow:hidden}
@@ -57,6 +96,12 @@ body.reader{overflow:hidden;display:flex;flex-direction:column;
 .page.--left::after{background:linear-gradient(to left, rgba(0,0,0,.16), rgba(0,0,0,.04) 5%, transparent 12%)}
 
 /* ---------- Trang soạn sách ---------- */
+/* Trang soạn: nền trắng, không đổi theo chế độ sáng/tối của máy */
+body.admin{
+  color-scheme:light;
+  --desk:#FFFFFF; --desk-deep:#FFFFFF; --panel:#F6F5F3; --ink:#1E1F22; --muted:#62656B;
+  --line:#DCDAD6; --accent:#2A211B; --on-accent:#FFFFFF;
+}
 body.admin{min-height:100%}
 #login{max-width:360px;margin:0 auto;padding:18vh 20px 40px}
 #login h1{margin:0 0 18px;font-size:1.6rem}
@@ -83,7 +128,7 @@ body.admin{min-height:100%}
 }
 .cell .thumb{
   position:relative;width:100%;aspect-ratio:3/4;background:#fff;border-radius:3px;overflow:hidden;
-  box-shadow:0 4px 10px rgba(8,20,14,.22);display:grid;place-items:center;color:#A9B3AB;font-size:.85rem;
+  box-shadow:0 2px 8px rgba(30,25,20,.18);display:grid;place-items:center;color:#A9B3AB;font-size:.85rem;
 }
 .cell .thumb canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .cell .num{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -108,3 +153,6 @@ body.admin{min-height:100%}
   background:var(--ink);color:var(--desk);padding:11px 16px;border-radius:12px;
   font-size:.92rem;max-width:min(92vw,460px);
 }
+
+/* Màn hình rộng: thanh điều hướng căn giữa (điện thoại để lệch phải cho khỏi che linh vật) */
+@media (min-width:900px){body.reader #bottom{justify-content:center} body.reader #bar{width:min(100%,460px)}}
